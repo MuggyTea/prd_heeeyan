@@ -8,7 +8,32 @@
             <div>{{ expandMessage }}</div>
           </template>
           <v-card-text>
-            <v-textarea v-model="beforeText" label="記事を書いてね"></v-textarea>
+            <v-text-field
+              ref="title"
+              v-model="title"
+              :rules="[() => !!title || 'This field is required']"
+              :error-messages="errorMessages"
+              label="Title"
+              placeholder="Title"
+              counter="30"
+              required
+            ></v-text-field>
+            <v-textarea
+              v-model="beforeText"
+              label="記事を書いてね"
+              :rules="[() => !!beforeText || 'This field is required']"
+              :error-messages="errorMessages"
+              counter
+              required
+            ></v-textarea>
+            <v-text-field
+              ref="category"
+              v-model="category"
+              :rules="[() => !!category || 'This field is required']"
+              :error-messages="errorMessages"
+              label="Category"
+              placeholder="旅行"
+            ></v-text-field>
           </v-card-text>
         </v-expansion-panel-content>
       </v-expansion-panel>
@@ -35,6 +60,9 @@ export default{
     return {
       isExpand: [],
       beforeText: '',
+      title: '',
+      category: '',
+      errorMessages: '',
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
         'Access-Control-Allow-Origin': '*'
@@ -55,7 +83,9 @@ export default{
       axios.post(
         'http://127.0.0.1:5000/',
         {
-          beforeText: this.beforeText
+          titile: this.title,
+          beforeText: this.beforeText,
+          category: this.category
         }
       )
       // 送信完了

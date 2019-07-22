@@ -45,28 +45,42 @@ def read_csv(station_master):
     return station_master_list
 
 
-def replace_str(station_master_list, before_text):
+def replace_str(station_master_list, article):
     """
     駅名置換関数
     送られてきたファイルの中身を「駅名」を駅名マスタの駅名に置換し、リストを返す
     """
     print('元の文章')
-    print(before_text)
+    print(article)
     # 変換後の文章を格納するdict
     after_text_dict = {}
+    after_text_tmp = {}
     results_text = []
-    if "「駅名」" in before_text['beforeText']:
+    if "「駅名」" not in article['beforeText']:
+        after_text_dict['after_text'] = article
+        return after_text_dict
+    else:
         for city in station_master_list:
             print(city['pref_name'])
-            after_text = before_text['beforeText'].replace(
+            # 県ごとの記事を生成
+            after_text = article['beforeText'].replace(
                 '「駅名」', city['pref_name'])
-            print(after_text)
+            print('after_text: {}'.format(after_text))
             # after_text_dict[city['pref_name']] = after_text
-            after_text_dict['city_text'] = after_text
-            print(after_text_dict)
-            results_text.append(after_text_dict)
-            after_text_dict = {}
+            after_text_tmp['after_city_text'] = after_text
+            after_text_tmp['title'] = article['title']
+            after_text_tmp['category'] = article['category']
+            # print(after_text_tmp)
+            print('tmpファイル')
+            print(article)
+            # print(results_text)
+            # after_text_tmp = article
+            # 県ごとにリストに格納
+            results_text.append(after_text_tmp)
+            # results_text = results_text
+            after_text_tmp = {}
         print(len(results_text))
+        print(results_text)
         after_text_dict['after_text'] = results_text
         return after_text_dict
 
@@ -74,5 +88,9 @@ def replace_str(station_master_list, before_text):
 if __name__ == '__main__':
     # マスタダウンロード
     station_master_list = read_csv('datasets/todofuken.txt')
-    replace_str(station_master_list,
-                "「駅名」の牛肉専門家が200以上のブランド牛の中から口コミや消費量、有名店で扱われている数などを総合して、弊社オリジナルで算出したブランド牛・牛肉通販サイトのおすすめランキングを紹介します")
+    article = {
+        "title": "タイトル",
+        "category": "カテゴリ",
+        "beforeText": "「駅名」の牛肉専門家が200以上のブランド牛の中から口コミや消費量、有名店で扱われている数などを総合して、弊社オリジナルで算出したブランド牛・牛肉通販サイトのおすすめランキングを紹介します"
+    }
+    replace_str(station_master_list, article)
