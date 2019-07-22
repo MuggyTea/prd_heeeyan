@@ -7,6 +7,13 @@
 from flask import Flask, jsonify, render_template, Blueprint
 from flask_cors import CORS
 import csv
+from wordpress_xmlrpc import Client, WordpressPost
+from wordpress_xmlrpc.methods.posts import GetPosts, NewPost
+from wordpress_xmlrpc.methods.users import GetsUserInfo
+import os
+import glob
+import ssl
+from backend.app.settings.constants import URL, ID, PASS
 
 
 def vue_app(app_name="VUE-FLASK"):
@@ -57,6 +64,7 @@ def replace_str(station_master_list, article):
     after_text_tmp = {}
     results_text = []
     if "「駅名」" not in article['beforeText']:
+        article['after_city_text'] = article['beforeText']
         after_text_dict['after_text'] = article
         return after_text_dict
     else:
@@ -83,6 +91,32 @@ def replace_str(station_master_list, article):
         print(results_text)
         after_text_dict['after_text'] = results_text
         return after_text_dict
+
+
+def send_wordpress(after_text_dict):
+    """
+    生成した記事を一括でwordpressブログに投稿するスクリプト
+    """
+    ssl._create_default_https_context = ssl._create_unverified_context
+    try:
+        wp = Client(URL, ID, Pass)
+        for after_text in after_text_dict:
+            print(after_text)
+            # 投稿の準備
+            post = WordpressPost()
+            # タイトル
+            post.title = after_text['title']
+            # コンテンツ
+            post.content = after_text['after_city_text']
+            # 下書きに反映
+            post.status = 'draft'
+            # カテゴリ
+            post.terms_names = {
+                'category': [after_text['category']]
+            }
+            wp.call(NewPost(post))
+    except Exception as e:
+        print(e)
 
 
 if __name__ == '__main__':

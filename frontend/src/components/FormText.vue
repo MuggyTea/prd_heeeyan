@@ -44,7 +44,7 @@
       <template v-for="(aftertext, index) in afterTexts">
         <v-list-tile :key="index">
           <v-list-tile-content>
-            <v-list-tile-title id="copyTarget" v-html="aftertext.city_text"></v-list-tile-title>
+            <v-list-tile-title id="copyTarget">{{ aftertext.after_city_text }}</v-list-tile-title>
             <v-btn class="primary" @click="copyText">コピー</v-btn>
           </v-list-tile-content>
         </v-list-tile>
@@ -83,7 +83,7 @@ export default{
       axios.post(
         'http://127.0.0.1:5000/',
         {
-          titile: this.title,
+          title: this.title,
           beforeText: this.beforeText,
           category: this.category
         }

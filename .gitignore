@@ -108,3 +108,4 @@ datasets/
 
 .history/
 .vscode/
+backend/app/settings/constants.py
